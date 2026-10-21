@@ -1,0 +1,51 @@
+services:
+  mysql_db:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: unless-stopped
+    ports:
+      # Map host port 3306 to container port 3306
+      - "3306:3306"
+    volumes:
+      # For running initialization scripts.
+      - ./mysql/migration:/docker-entrypoint-initdb.d
+      # Persist data across container restarts.
+      - mysql_data:/var/lib/mysql
+    env_file:
+      - ./mysql/.env
+    networks:
+      - fullstack-network
+
+  backend:
+    image: backend:latest
+    container_name: backend
+    restart: unless-stopped
+    ports:
+      # Map host port 3333 to container port 3333
+      - "3333:3333"
+    env_file:
+      - ../../localhost/NestJS/slava-server/.env
+    depends_on:
+      - mysql_db
+    networks:
+      - fullstack-network
+
+  frontend:
+    image: frontend:latest
+    container_name: frontend
+    restart: unless-stopped
+    ports:
+      # Map host port 3000 to container port 80
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - fullstack-network
+
+volumes:
+  # Define the volume for persistent MySQL data.
+  mysql_data:
+
+networks:
+  fullstack-network:
+    driver: bridge

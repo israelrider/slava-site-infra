@@ -1,0 +1,30 @@
+services:
+  registry:
+    image: registry:2
+    restart: always
+    environment:
+      REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY: /data
+      REGISTRY_HTTP_ADDR: :5000
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_REALM: "Registry Realm"
+      REGISTRY_AUTH_HTPASSWD_PATH: /auth/registry.password
+    volumes:
+      - ./data:/data
+      - ./auth:/auth
+
+  nginx:
+    image: nginx:alpine
+    restart: always
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/404.html:/usr/share/nginx/html/404.html
+      - ./auth:/auth:ro
+      - ./data:/data:ro
+      # If using Let's Encrypt certs:
+      - /etc/letsencrypt/live/slava-kvet.com/fullchain.pem:/certs/fullchain.pem:ro
+      - /etc/letsencrypt/live/slava-kvet.com/privkey.pem:/certs/privkey.pem:ro
+    depends_on:
+      - registry

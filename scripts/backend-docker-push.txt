@@ -1,0 +1,8 @@
+# username slava
+# password F3t98fxDTB1eM6wR
+
+cd C:\Users\user\Documents\localhost\NestJS\slava-server\; `
+docker build -t backend .; `
+docker tag backend slava-kvet.com/backend:latest; `
+docker login slava-kvet.com; `
+docker push slava-kvet.com/backend:latest;

@@ -1,0 +1,8 @@
+# username slava
+# password F3t98fxDTB1eM6wR
+
+cd C:\Users\user\Documents\localhost\TypeScript\slava-client\; `
+docker build -t frontend .; `
+docker tag frontend slava-kvet.com/frontend:latest; `
+docker login slava-kvet.com; `
+docker push slava-kvet.com/frontend:latest;
